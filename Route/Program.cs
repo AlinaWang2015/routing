@@ -87,12 +87,18 @@ namespace Route
             rn.MapNodes.Add("4", n4);
             rn.MapNodes.Add("5", n5);
             rn.MapNodes.Add("6", n6);
+
+            DijkstraAlgorithm dij = new DijkstraAlgorithm(rn);
+            double cost=dij.GetShortPath("1", "5");
+            dij.ShortPathToString("1", "5");
+            Console.WriteLine("******************************");
+
             LandmarkAlgorithm landmark = new LandmarkAlgorithm(rn);
-            landmark.SelectLandmarks(4);
-            
-            double cost = landmark.ComputeShortPath("1", "5");
-             Console.WriteLine(cost);
-            // Console.WriteLine(cost);
+            landmark.SelectLandmarks(1);
+            double cost1 = landmark.ComputeShortPath("1", "5");
+            //Console.WriteLine(cost1);
+            Console.WriteLine("******************************");
+
             Console.ReadLine();
             
         }

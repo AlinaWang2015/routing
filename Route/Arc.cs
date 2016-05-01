@@ -17,6 +17,7 @@ namespace Route
         private RoadDirection direction;
         private string name;
         private Dictionary<string, string> tags;
+        private bool arcFlag = false;
 
         private Collection<Arc> incomingArcs;
         private Collection<Arc> outgoingArcs;
@@ -133,6 +134,19 @@ namespace Route
                     outgoingArcs = new Collection<Arc>();
                 }
                 return outgoingArcs;
+            }
+        }
+
+        public bool ArcFlag
+        {
+            get
+            {
+                return arcFlag;
+            }
+
+            set
+            {
+                arcFlag = value;
             }
         }
 

@@ -12,15 +12,9 @@ namespace Route
         private RoadNetwork graph;
         private Dictionary<string, double> visitedNodeMarks;
         private List<ActiveNode> activeNodes;
-        private Dictionary<string, double> heuristics;
         private Dictionary<string, string> parents;
-
-        public DijkstraAlgorithm() { }
-
-        public DijkstraAlgorithm(RoadNetwork graph)
-        {
-            this.graph = graph;
-        }
+        private Dictionary<string, double> heuristics;
+        private bool considerArcFlag;
 
         public Dictionary<string, double> VisitedNodeMarks
         {
@@ -46,17 +40,7 @@ namespace Route
             }
         }
 
-        public Dictionary<string, string> Parents
-        {
-            get
-            {
-                if (parents == null)
-                {
-                    parents = new Dictionary<string, string>();
-                }
-                return parents;
-            }
-        }
+        
 
         public RoadNetwork Graph
         {
@@ -84,12 +68,45 @@ namespace Route
             }
         }
 
+        public bool ConsiderArcFlag
+        {
+            get
+            {
+                return considerArcFlag;
+            }
+
+            set
+            {
+                considerArcFlag = value;
+            }
+        }
+
+        public Dictionary<string, string> Parents
+        {
+            get
+            {
+                return parents;
+            }
+
+            set
+            {
+                parents = value;
+            }
+        }
+
+        public DijkstraAlgorithm() { }
+
+        public DijkstraAlgorithm(RoadNetwork graph)
+        {
+            this.graph = graph;
+        }
+        
         public IComparer<ActiveNode> costComparer = new ComparatorToAnother();
 
 
         public double GetShortPath(string startNodeId, string targetNodeId)
         {
-            parents = new Dictionary<string, string>();
+            Parents = new Dictionary<string, string>();
             visitedNodeMarks = new Dictionary<string, double>();
             double shortestPathCost = 0;
             Collection<Arc> nodeAdjacentArc;
@@ -109,8 +126,6 @@ namespace Route
             }
 
             PriorityQueue<ActiveNode> pq = new PriorityQueue<ActiveNode>(1, costComparer);
-            //activeNodes = new List<ActiveNode>();
-            //parents = new Dictionary<string, string>();
             pq.Push(startNode);
 
 
@@ -125,7 +140,7 @@ namespace Route
                     continue;
                 }
                 VisitedNodeMarks.Add(currentNode.id, currentNode.dist);
-                parents.Add(currentNode.id, currentNode.parent);
+                Parents.Add(currentNode.id, currentNode.parent);
                 numSettledNodes++;
                 if (currentNode.id == targetNodeId)
                 {
@@ -143,6 +158,11 @@ namespace Route
                 for (int i = 0; i < nodeAdjacentArc.Count(); i++)
                 {
                     Arc arc = nodeAdjacentArc[i];
+                    if(this.ConsiderArcFlag && arc.ArcFlag)
+                    {
+                        continue;
+                    }
+
                     if (!isvisited(arc.TailNode.Id))
                     {
                         distToAdjNode = currentNode.dist + nodeAdjacentArc[i].Cost;
@@ -172,22 +192,6 @@ namespace Route
             return false;
         }
 
-        public Dictionary<string, double> ComputeStraihtHeuristic(string targetNodeId)
-        {
-            heuristics = new Dictionary<string, double>();
-            double distance;
-            int maxSpeed = 110;
-            double costTime;
-            Node targetNode = graph.MapNodes[targetNodeId];
-            for (int i = 0; i < graph.Nodes.Count(); i++)
-            {
-                distance = graph.ComputeDistance(graph.Nodes[i], targetNode);
-                costTime = distance / maxSpeed;
-                heuristics.Add(graph.Nodes[i].Id, costTime);
-            }
-            return heuristics;
-        }
-
         public void ShortPathToString(string startNodeId, string targetNodeId)
         {
             string path = "";
@@ -198,7 +202,7 @@ namespace Route
             path = path + currentNode.Id + "->";
             while (currentNodeId != startNodeId)
             {
-                currentNodeId = parents[currentNodeId];
+                currentNodeId = Parents[currentNodeId];
                 currentNode = graph.MapNodes[currentNodeId];
                 path = currentNode.Id + "->" + path;
             }

@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ActiveNode.cs" />
     <Compile Include="Arc.cs" />
+    <Compile Include="ArcFlagsAlgorithm.cs" />
     <Compile Include="Bounds.cs" />
     <Compile Include="ComparatorToAnother.cs" />
     <Compile Include="Coordinate.cs" />

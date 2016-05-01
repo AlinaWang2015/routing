@@ -63,7 +63,7 @@ namespace Route
         }
 
         //dijkstra from a set of nodes
-        
+        //怎样把已经访问过的节点在
 
         public Dictionary<string, double> PreComputLandmarksDistances(string currentLandmarkId)
         {
